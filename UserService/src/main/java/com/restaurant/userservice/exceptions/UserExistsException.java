@@ -1,9 +1,16 @@
 package com.restaurant.userservice.exceptions;
 
-public class UserExistsException extends RuntimeException{
+/**
+ * Exception thrown when a user already exists.
+ */
+public class UserExistsException extends RuntimeException {
 
-    public UserExistsException(String message)
-    {
+    /**
+     * Constructs a new UserExistsException with the specified detail message.
+     *
+     * @param message the detail message
+     */
+    public UserExistsException(String message) {
         super(message);
     }
 }

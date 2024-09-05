@@ -1,77 +1,51 @@
-package com.restaurant.userservice.entities;
-
-import com.restaurant.userservice.enums.RoleType;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+package com.restaurant.userservice.dto.out;
 
 /**
- * Entity class representing a user in the system.
+ * Data Transfer Object for user responses.
+ * This DTO contains user information returned in responses.
  */
-@Entity
-@Table(name = "users")
-public class User {
+public class UserResponseDto {
 
     /** The unique identifier for the user. */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     /** The username of the user. */
-    @Column(nullable = false)
     private String username;
 
-    /** The password of the user. */
-    @Column(nullable = false)
-    private String password;
-
-    /** The contact number of the user. */
-    @Column(nullable = false, unique = true)
-    private String contactNumber;
-
     /** The email address of the user. */
-    @Column(unique = true, nullable = false)
     private String email;
 
+    /** The contact number of the user. */
+    private String contactNumber;
+
     /** The role assigned to the user. */
-    @Enumerated(EnumType.STRING)
-    private RoleType role;
+    private String role;
 
     /** The wallet balance associated with the user. */
-    @Column(nullable = false)
     private Double walletBalance;
 
     /**
      * Default constructor.
      */
-    public User() {
+    public UserResponseDto() {
         super();
     }
 
     /**
-     * Constructs a new User with the specified details.
+     * Constructs a new UserResponseDto with the specified user details.
      *
      * @param id             the unique identifier for the user
      * @param username       the username of the user
-     * @param password       the password of the user
-     * @param contactNumber  the contact number of the user
      * @param email          the email address of the user
+     * @param contactNumber  the contact number of the user
      * @param role           the role assigned to the user
      * @param walletBalance  the wallet balance associated with the user
      */
-    public User(int id, String username, String password, String contactNumber,
-                String email, RoleType role, Double walletBalance) {
+    public UserResponseDto(int id, String username, String email, String contactNumber, String role, Double walletBalance) {
         this.id = id;
         this.username = username;
-        this.password = password;
-        this.contactNumber = contactNumber;
         this.email = email;
+        this.contactNumber = contactNumber;
         this.role = role;
         this.walletBalance = walletBalance;
     }
@@ -113,24 +87,6 @@ public class User {
     }
 
     /**
-     * Gets the password of the user.
-     *
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the password of the user.
-     *
-     * @param password the new password
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
      * Gets the email address of the user.
      *
      * @return the email address
@@ -149,24 +105,6 @@ public class User {
     }
 
     /**
-     * Gets the role assigned to the user.
-     *
-     * @return the role
-     */
-    public RoleType getRole() {
-        return role;
-    }
-
-    /**
-     * Sets the role assigned to the user.
-     *
-     * @param role the new role
-     */
-    public void setRole(RoleType role) {
-        this.role = role;
-    }
-
-    /**
      * Gets the contact number of the user.
      *
      * @return the contact number
@@ -182,6 +120,24 @@ public class User {
      */
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
+    }
+
+    /**
+     * Gets the role assigned to the user.
+     *
+     * @return the role
+     */
+    public String getRole() {
+        return role;
+    }
+
+    /**
+     * Sets the role assigned to the user.
+     *
+     * @param role the new role
+     */
+    public void setRole(String role) {
+        this.role = role;
     }
 
     /**
