@@ -1,9 +1,16 @@
 package com.restaurant.userservice.exceptions;
 
-public class InvalidRoleException extends RuntimeException{
+/**
+ * Exception thrown when an invalid role is encountered.
+ */
+public class InvalidRoleException extends RuntimeException {
 
-    public InvalidRoleException(String message)
-    {
+    /**
+     * Constructs a new InvalidRoleException with the specified detail message.
+     *
+     * @param message the detail message
+     */
+    public InvalidRoleException(String message) {
         super(message);
     }
 }

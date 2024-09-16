@@ -1,181 +1,198 @@
 package com.restaurant.userservice.service.impl;
 
+import com.restaurant.userservice.constants.Constants;
 import com.restaurant.userservice.dto.in.AddressRequestDto;
+import com.restaurant.userservice.dto.in.AddressUpdateRequestDto;
 import com.restaurant.userservice.dto.out.AddressResponseDto;
+import com.restaurant.userservice.dto.out.CommonResponseDto;
 import com.restaurant.userservice.entities.Address;
 import com.restaurant.userservice.entities.User;
 import com.restaurant.userservice.enums.RoleType;
+import com.restaurant.userservice.exceptions.AddressNotFoundExceptions;
+import com.restaurant.userservice.exceptions.UserNotAllowedExceptions;
+import com.restaurant.userservice.exceptions.UserNotFoundException;
 import com.restaurant.userservice.repositories.AddressRepository;
 import com.restaurant.userservice.repositories.UserRepository;
 import com.restaurant.userservice.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.management.relation.Role;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of {@link AddressService} for managing addresses.
+ */
 @Service
 public class AddressServiceImpl implements AddressService {
 
-    private final UserRepository userRepository;
-    private final AddressRepository deliveryAddressRepository;
-
+    /**
+     * Repository for managing {@link User} entities.
+     */
     @Autowired
-    public AddressServiceImpl(UserRepository userRepository, AddressRepository deliveryAddressRepository) {
-        this.userRepository = userRepository;
-        this.deliveryAddressRepository = deliveryAddressRepository;
-    }
+    private  UserRepository userRepository;
 
+    /**
+     * Repository for managing {@link Address} entities.
+     */
+    @Autowired
+    private  AddressRepository addressRepository;
 
+    /**
+     * Adds a new address for a user.
+     *
+     * @param addressAddDTO the DTO containing the address details to be added
+     * @return the {@link AddressResponseDto} with the details of the added address
+     * @throws UserNotFoundException if the user with the specified ID is not found
+     * @throws UserNotAllowedExceptions if the user does not have the CUSTOMER role
+     */
     @Override
-    public AddressResponseDto addAddress(int userId, AddressRequestDto addressAddDTO) {
+    public AddressResponseDto addAddress(AddressRequestDto addressAddDTO) {
+        User user = userRepository.findById(addressAddDTO.getId())
+                .orElseThrow(() -> new UserNotFoundException(Constants.USER_NOT_FOUND));
 
-        // Fetch user by ID
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Check if user has the role 'CUSTOMER'
         if (!user.getRole().equals(RoleType.CUSTOMER)) {
-            //throw new UnauthorizedAccessException("User is not permitted to add an address");
+            throw new UserNotAllowedExceptions(Constants.USER_NOT_ALLOWED);
         }
 
-        Address deliveryAddress = new Address();
-        deliveryAddress.setUserId(userId);
-        deliveryAddress.setStreet(addressAddDTO.getStreet());
-        deliveryAddress.setCity(addressAddDTO.getCity());
-        deliveryAddress.setState(addressAddDTO.getState());
-        deliveryAddress.setCountry(addressAddDTO.getCountry());
-        deliveryAddress.setZipCode(addressAddDTO.getZipCode());
+        Address address = new Address();
+        address.setUserId(user.getId());
+        address.setCity(addressAddDTO.getCity());
+        address.setCountry(addressAddDTO.getCountry());
+        address.setZipCode(addressAddDTO.getZipCode());
+        address.setState(addressAddDTO.getState());
+        address.setStreet(addressAddDTO.getStreet());
 
-        //deliveryAddress.setPostalCode(addressAddDTO.getPostalCode());
+        Address savedAddress = addressRepository.save(address);
 
+        AddressResponseDto responseDTO = new AddressResponseDto();
+        responseDTO.setAddressId(savedAddress.getId());
+        responseDTO.setStreet(savedAddress.getStreet());
+        responseDTO.setCity(savedAddress.getCity());
+        responseDTO.setState(savedAddress.getState());
+        responseDTO.setZipCode(savedAddress.getZipCode());
+        responseDTO.setCountry(savedAddress.getCountry());
+        responseDTO.setUserId(savedAddress.getUserId());
 
-        deliveryAddressRepository.save(deliveryAddress);
-
-        List<Address> addressList = deliveryAddressRepository.findByUserId(userId);
-
-        List<AddressRequestDto> addressDTOList = addressList.stream()
-                .map(address -> new AddressRequestDto(
-                       // address.getId(),
-                        address.getStreet(),
-                        address.getCity(),
-                        address.getState(),
-                        address.getZipCode(),
-                        address.getCountry()
-
-
-                ))
-                .collect(Collectors.toList());
-
-        return new AddressResponseDto(userId, addressDTOList);
-
+        return responseDTO;
     }
+
+    /**
+     * Retrieves an address by its ID.
+     *
+     * @param addressId the ID of the address to retrieve
+     * @return the {@link AddressResponseDto} with the address details
+     * @throws AddressNotFoundExceptions if the address with the specified ID is not found
+     */
     @Override
-    public AddressResponseDto updateAddress(int addressId, AddressRequestDto addressUpdateDTO) {
+    public AddressResponseDto getAddressById(int addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressNotFoundExceptions(Constants.ADDRESS_NOT_FOUND + addressId));
 
-        // Find the address by ID
-        Address deliveryAddress = deliveryAddressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+        AddressResponseDto responseDTO = new AddressResponseDto();
+        responseDTO.setAddressId(address.getId());
+        responseDTO.setStreet(address.getStreet());
+        responseDTO.setCity(address.getCity());
+        responseDTO.setState(address.getState());
+        responseDTO.setZipCode(address.getZipCode());
+        responseDTO.setCountry(address.getCountry());
+        responseDTO.setUserId(address.getUserId());
 
-        // Find the user by ID associated with the address
-        User user = userRepository.findById(deliveryAddress.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return responseDTO;
+    }
 
-        // Check if the user has the appropriate role
+    /**
+     * Updates an existing address.
+     *
+     * @param addressId the ID of the address to be updated
+     * @param addressUpdateDTO the DTO containing the updated address details
+     * @return a {@link CommonResponseDto} indicating the outcome of the update operation
+     * @throws AddressNotFoundExceptions if the address with the specified ID is not found
+     * @throws UserNotFoundException if the user associated with the address is not found
+     * @throws UserNotAllowedExceptions if the user does not have the CUSTOMER role
+     */
+    @Override
+    public CommonResponseDto updateAddress(int addressId, AddressUpdateRequestDto addressUpdateDTO) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressNotFoundExceptions(Constants.ADDRESS_NOT_FOUND));
+
+        User user = userRepository.findById(address.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(Constants.USER_NOT_FOUND));
+
         if (user.getRole() != RoleType.CUSTOMER) {
-            throw new RuntimeException("User not permitted to update address");
+            throw new UserNotAllowedExceptions(Constants.USER_NOT_ALLOWED);
         }
 
-        // Update the address details
-        deliveryAddress.setStreet(addressUpdateDTO.getStreet());
-        deliveryAddress.setCity(addressUpdateDTO.getCity());
-        deliveryAddress.setState(addressUpdateDTO.getState());
-        deliveryAddress.setZipCode(addressUpdateDTO.getZipCode());
-        deliveryAddress.setCountry(addressUpdateDTO.getCountry());
+        address.setCity(addressUpdateDTO.getCity());
+        address.setCountry(addressUpdateDTO.getCountry());
+        address.setZipCode(addressUpdateDTO.getZipCode());
+        address.setState(addressUpdateDTO.getState());
+        address.setStreet(addressUpdateDTO.getStreet());
 
+        addressRepository.save(address);
 
-        deliveryAddressRepository.save(deliveryAddress);
-
-
-        List<AddressRequestDto> updatedAddresses = deliveryAddressRepository.findByUserId(user.getId())
-                .stream()
-                .map(address -> new AddressRequestDto(
-                        address.getStreet(),
-                        address.getCity(),
-                        address.getState(),
-                        address.getZipCode(),
-                        address.getCountry()))
-                .collect(Collectors.toList());
-
-        // Return the AddressResponseDto with the updated list of addresses
-        return new AddressResponseDto(user.getId(), updatedAddresses);
+        return new CommonResponseDto(Constants.ADDRESS_UPDATE_SUCCESSFULLY);
     }
 
-
+    /**
+     * Deletes an address by its ID.
+     *
+     * @param addressId the ID of the address to be deleted
+     * @return a {@link CommonResponseDto} indicating the outcome of the delete operation
+     * @throws AddressNotFoundExceptions if the address with the specified ID is not found
+     */
     @Override
-    public AddressResponseDto deleteAddress(int addressId) {
+    public CommonResponseDto deleteAddress(int addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressNotFoundExceptions(Constants.ADDRESS_NOT_FOUND));
 
-       /* Address deliveryAddress = deliveryAddressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+        addressRepository.delete(address);
 
-
-        deliveryAddressRepository.delete(deliveryAddress);
-
-
-        return new AddressResponseDto("Address deleted successfully");*/
-        // Find the address by ID
-        Address deliveryAddress = deliveryAddressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
-
-        // Get the userId before deleting the address
-        //int userId = deliveryAddressRepository.getId();
-        int userId=1;
-
-        // Delete the address
-        deliveryAddressRepository.delete(deliveryAddress);
-
-        // Fetch the updated list of addresses for the user
-        List<AddressRequestDto> updatedAddresses = deliveryAddressRepository.findByUserId(userId)
-                .stream()
-                .map(address -> new AddressRequestDto(
-                        address.getStreet(),
-                        address.getCity(),
-                        address.getState(),
-                        address.getZipCode(),
-                        address.getCountry()))
-                .collect(Collectors.toList());
-
-        // Return the AddressResponseDto with the updated list of addresses
-        return new AddressResponseDto(userId, updatedAddresses);
+        return new CommonResponseDto(Constants.ADDRESS_DELETE_SUCCESSFULLY);
     }
 
+    /**
+     * Retrieves all addresses associated with a specific user ID.
+     *
+     * @param userId the ID of the user whose addresses are to be retrieved
+     * @return a list of {@link AddressResponseDto} representing the addresses of the user
+     * @throws UserNotFoundException if the user with the specified ID is not found
+     */
     @Override
-    public AddressResponseDto getAllAddressesByUserId(int userId) {
+    public List<AddressResponseDto> getAllAddressesByUserId(int userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(Constants.USER_NOT_FOUND));
 
+        List<Address> addresses = addressRepository.findByUserId(userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-
-        List<Address> addresses = deliveryAddressRepository.findByUserId(userId);
-
-
-        List<AddressRequestDto> addressDTOs = addresses.stream()
-                .map(address -> new AddressRequestDto(
-                   //     address.getId(),
-                        address.getCity(),
-                        address.getCountry(),
-                        address.getStreet(),
-                        address.getZipCode(),
-                        address.getState()
-                      //  address.getStreetAddress()
-                ))
+        List<AddressResponseDto> addressDTOs = addresses.stream()
+                .map(address -> {
+                    AddressResponseDto dto = new AddressResponseDto();
+                    dto.setAddressId(address.getId());
+                    dto.setStreet(address.getStreet());
+                    dto.setCity(address.getCity());
+                    dto.setState(address.getState());
+                    dto.setZipCode(address.getZipCode());
+                    dto.setCountry(address.getCountry());
+                    dto.setUserId(address.getUserId());
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
-
-        return new AddressResponseDto(userId, addressDTOs);
+        return addressDTOs;
     }
 
+    /**
+     * Deletes all addresses associated with a specific user ID.
+     *
+     * @param userId the ID of the user whose addresses are to be deleted
+     * @return a {@link CommonResponseDto} indicating the outcome of the delete operation
+     */
+    @Override
+    public CommonResponseDto deleteAddressesByUserId(int userId) {
+        int count = addressRepository.countByUserId(userId);
+        if (count > 0) {
+            addressRepository.deleteByUserId(userId);
+        }
+        return new CommonResponseDto(Constants.ADDRESS_DELETE_SUCCESSFULLY);
+    }
 }
-

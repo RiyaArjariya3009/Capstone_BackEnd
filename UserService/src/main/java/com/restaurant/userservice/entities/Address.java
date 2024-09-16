@@ -1,227 +1,192 @@
 package com.restaurant.userservice.entities;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+/**
+ * Entity class representing an address.
+ */
 @Entity
 @Table(name = "address")
 public class Address {
 
+    /** The unique identifier for the address. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /** The unique identifier for the user associated with the address. */
     @Column(name = "user_id", nullable = false)
     private int userId;
 
-   // @NotBlank(message = "Street is mandatory")
+    /** The street of the address. */
     private String street;
 
-   // @NotBlank(message = "City is mandatory")
+    /** The city of the address. */
     private String city;
 
-    //@NotBlank(message = "State is mandatory")
+    /** The state of the address. */
     private String state;
 
-   // @NotBlank(message = "Zip code is mandatory")
+    /** The zip code of the address. */
     private String zipCode;
 
-   // @NotBlank(message = "Country is mandatory")
+    /** The country of the address. */
     private String country;
 
-
+    /**
+     * Default constructor.
+     */
     public Address() {
         super();
     }
 
-    public Address(int userId,String street, String city, String state, String zipCode, String country) {
-        this.userId=userId;
-        this.street = street;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.country = country;
-    }
-
-    // Getters and Setters
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-    public void setUserId(int userId)
-    {
-        this.userId=userId;
-    }
-    public int getUserId()
-    {
-        return userId;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-}
-
-/*public class Address {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(name = "user_id", nullable = false)
-    private int userId;
-
-    @Column(name = "city", nullable = false, length = 255)
-    private String city;
-
-    @Column(name = "country", nullable = false, length = 255)
-    private String country;
-
-    @Column(name = "full_Name", nullable = false, length = 255)
-    private String fullName;
-
-    @Column(name = "postal_code", nullable = false, length = 255)
-    private String postalCode;
-
-    @Column(name = "state", nullable = false, length = 255)
-    private String state;
-
-    @Column(name = "street_address", nullable = false, length = 255)
-    private String streetAddress;
-
-    public Address() {
-        super();
-    }
-
-    public Address(int userId, String city, String country, String fullName, String postalCode, String state, String streetAddress) {
+    /**
+     * Constructs a new Address with the specified details.
+     *
+     * @param userId    the unique identifier for the user associated with the address
+     * @param street    the street of the address
+     * @param city      the city of the address
+     * @param state     the state of the address
+     * @param zipCode   the zip code of the address
+     * @param country   the country of the address
+     */
+    public Address(int userId, String street, String city, String state, String zipCode, String country) {
         this.userId = userId;
+        this.street = street;
         this.city = city;
-        this.country = country;
-        this.fullName = fullName;
-        this.postalCode = postalCode;
         this.state = state;
-        this.streetAddress = streetAddress;
-    }
-
-    public String getStreetAddress() {
-        return streetAddress;
-    }
-
-    public void setStreetAddress(String streetAddress) {
-        this.streetAddress = streetAddress;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
+        this.zipCode = zipCode;
         this.country = country;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
+    /**
+     * Gets the unique identifier for the address.
+     *
+     * @return the address ID
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for the address.
+     *
+     * @param id the new address ID
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Gets the unique identifier for the user associated with the address.
+     *
+     * @return the user ID
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     * Sets the unique identifier for the user associated with the address.
+     *
+     * @param userId the new user ID
+     */
     public void setUserId(int userId) {
         this.userId = userId;
     }
 
-
-
-    @Override
-    public String toString() {
-        return "DeliveryAddress{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", city='" + city + '\'' +
-                ", country='" + country + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", postalCode='" + postalCode + '\'' +
-                ", state='" + state + '\'' +
-                ", streetAddress='" + streetAddress + '\'' +
-                '}';
+    /**
+     * Gets the street of the address.
+     *
+     * @return the street
+     */
+    public String getStreet() {
+        return street;
     }
-}*/
 
+    /**
+     * Sets the street of the address.
+     *
+     * @param street the new street
+     */
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    /**
+     * Gets the city of the address.
+     *
+     * @return the city
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * Sets the city of the address.
+     *
+     * @param city the new city
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * Gets the state of the address.
+     *
+     * @return the state
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * Sets the state of the address.
+     *
+     * @param state the new state
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    /**
+     * Gets the zip code of the address.
+     *
+     * @return the zip code
+     */
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    /**
+     * Sets the zip code of the address.
+     *
+     * @param zipCode the new zip code
+     */
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    /**
+     * Gets the country of the address.
+     *
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * Sets the country of the address.
+     *
+     * @param country the new country
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+}

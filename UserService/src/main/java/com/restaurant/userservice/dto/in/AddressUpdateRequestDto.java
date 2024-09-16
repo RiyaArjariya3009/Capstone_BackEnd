@@ -3,15 +3,10 @@ package com.restaurant.userservice.dto.in;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Data Transfer Object for address request.
- * Contains information about an address to be added or updated.
+ * Data Transfer Object for updating address information.
+ * Contains the fields necessary for updating an address.
  */
-public class AddressRequestDto {
-
-    /**
-     * Unique identifier for the address.
-     */
-    private int id;
+public class AddressUpdateRequestDto {
 
     /**
      * Street address. This field is mandatory.
@@ -42,48 +37,6 @@ public class AddressRequestDto {
      */
     @NotBlank(message = "Country is mandatory")
     private String country;
-
-    /**
-     * Default constructor for AddressRequestDto.
-     */
-    public AddressRequestDto() {
-        super();
-    }
-
-    /**
-     * Parameterized constructor for AddressRequestDto.
-     *
-     * @param street  the street address
-     * @param city    the city
-     * @param state   the state
-     * @param zipCode the zip code
-     * @param country the country
-     */
-    public AddressRequestDto(String street, String city, String state, String zipCode, String country) {
-        this.street = street;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.country = country;
-    }
-
-    /**
-     * Gets the unique identifier for the address.
-     *
-     * @return the address ID
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique identifier for the address.
-     *
-     * @param id the address ID
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 
     /**
      * Gets the street address.
