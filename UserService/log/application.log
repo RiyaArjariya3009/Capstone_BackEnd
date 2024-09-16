@@ -1,0 +1,13 @@
+2024-08-24 21:39:18 INFO  UserServiceImpl:87 - User login attempt with email: rii@example.com
+2024-08-24 21:39:18 INFO  UserServiceImpl:112 - User logged in successfully with email: rii@example.com
+2024-08-24 22:22:50 INFO  UserServiceImpl:87 - User login attempt with email: rii@example.com
+2024-08-24 22:22:50 INFO  UserServiceImpl:112 - User logged in successfully with email: rii@example.com
+2024-08-24 22:50:21 INFO  UserServiceImpl:87 - User login attempt with email: rii@example.com
+2024-08-24 22:50:21 WARN  UserServiceImpl:107 - Invalid role attempt for email: rii@example.com
+2024-08-27 12:27:10 WARN  UserServiceImpl:59 - User with email shri@example.com already exists
+2024-08-27 12:43:47 WARN  UserServiceImpl:101 - User with email rinku@example.com not found
+2024-08-27 12:50:31 WARN  UserServiceImpl:59 - User with email priya@example.com already exists
+2024-08-27 14:12:51 WARN  UserServiceImpl:112 - Invalid password attempt for email: Akash@example.com
+2024-08-27 15:10:52 WARN  UserServiceImpl:59 - User with email ranjit@example.com already exists
+2024-08-27 15:12:56 WARN  UserServiceImpl:59 - User with email ranjit@example.com already exists
+2024-08-27 15:36:16 WARN  UserServiceImpl:103 - User with email Trishi@example.com not found
